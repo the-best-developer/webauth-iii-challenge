@@ -24,8 +24,6 @@ router.post('/register', async (req, res) => {
     }
 });
 
-
-
 router.post('/login', async (req, res) => {
     let user = req.body;
 
@@ -56,7 +54,6 @@ router.get('/users', Auth.tokenCheck, async (req, res) => {
     
     try{
         const allUsers = await usersDb('users');
-        
         return res.status(200).json( allUsers)
     }
     catch (err) {

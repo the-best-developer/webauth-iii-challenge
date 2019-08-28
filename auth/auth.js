@@ -17,17 +17,23 @@ function generateToken (user) {
 }
 
 function tokenCheck (req, res, next) {
-    const token = req.headers.authorization;
+    let token = req.headers.authorization;
+    token = token.split(" ")
     
+    if (token[0] !== 'bearer' || !token[1])
+    {
+        return res.status(500).json({message: 'bad jwt'})
+    }
+
     if (!token) {
         return res.status(500).json({message: "token missing"})
     }
     
-    jwt.verify(token, secrets.jwtSecret, (error, newToken) => {
+    jwt.verify(token[1], secrets.jwtSecret, (error, newToken) => {
         if (error) {
           res.status(401).json({message: 'error verifying token', error: error.message});
         } else {
-
+            
           req.token = newToken;
           console.log(newToken)
           next();
