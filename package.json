@@ -5,5 +5,9 @@
     "jsonwebtoken": "^8.5.1",
     "knex": "^0.19.2",
     "sqlite3": "^4.1.0"
+  },
+  "scripts": {
+    "start": "node index.js",
+    "server": "nodemon index.js"
   }
 }
