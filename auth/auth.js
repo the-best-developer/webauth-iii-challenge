@@ -1,7 +1,7 @@
 const secrets = require('./secrets.js');
 const jwt = require('jsonwebtoken');
 
-const generateToken = (user) => {
+function generateToken (user) {
     const payload = {
       subject: user.id, // sub in payload is what the token is about
       username: user.username,
@@ -16,7 +16,7 @@ const generateToken = (user) => {
     return jwt.sign(payload, secrets.jwtSecret, options); // this method is synchronous
 }
 
-const tokenCheck = async (req, res, next) => {
+function tokenCheck (req, res, next) {
     const token = req.headers.authorization;
     
     if (!token) {
@@ -24,20 +24,15 @@ const tokenCheck = async (req, res, next) => {
     }
     
     jwt.verify(token, secrets.jwtSecret, (error, newToken) => {
-        if (err) {
-          res.status(401).json({message: 'error verifying token', error: err.message});
-        } else { 
-          // decodedToken! next()!
-          //
-          // we add decodedToken to the req object just so that 
-          // future middleware methods can have access to it...
-          // in our example here, no middleware methods are accessing
-          // it, but it makes sense to store it... our app may grow!
-          //
-          req.token = token;
+        if (error) {
+          res.status(401).json({message: 'error verifying token', error: error.message});
+        } else {
+
+          req.token = newToken;
+          console.log(newToken)
           next();
         }
-      });
+    });
 }
 
 module.exports = {

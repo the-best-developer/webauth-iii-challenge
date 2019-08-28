@@ -2,7 +2,7 @@ const express = require('express');
 const router = express.Router();
 const bcrypt = require('bcryptjs')
 const usersDb = require('../database/users.js');
-const generateToken = require('../auth/auth')
+const Auth = require('../auth/auth')
 
 router.post('/register', async (req, res) => {
     let newUser = req.body;
@@ -43,7 +43,7 @@ router.post('/login', async (req, res) => {
             return res.status(500).json({message: "Incorrect password"})
         }
 
-        const token = generateToken(user);
+        const token = Auth.generateToken(user);
         
         return res.status(200).json({message: `Logged in as ${selectedUser.username}!`, token: token })
     }
@@ -52,7 +52,16 @@ router.post('/login', async (req, res) => {
     }
 });
 
-
-
+router.get('/users', Auth.tokenCheck, async (req, res) => {
+    
+    try{
+        const allUsers = await usersDb('users');
+        
+        return res.status(200).json( allUsers)
+    }
+    catch (err) {
+        return res.status(500).json({err: err.message})
+    }
+});
 
 module.exports = router;
